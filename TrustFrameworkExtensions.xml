@@ -4,12 +4,12 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
   PolicySchemaVersion="0.3.0.0" 
-  TenantId="testgye.onmicrosoft.com" 
+  TenantId="camilotestb2c.onmicrosoft.com" 
   PolicyId="B2C_1A_TrustFrameworkExtensions" 
-  PublicPolicyUri="http://testgye.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+  PublicPolicyUri="http://camilotestb2c.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
   
   <BasePolicy>
-    <TenantId>testgye.onmicrosoft.com</TenantId>
+    <TenantId>camilotestb2c.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
   </BasePolicy>
   <BuildingBlocks>
@@ -24,12 +24,12 @@
       <TechnicalProfiles>
          <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">49b9f5df-8419-4deb-8956-ac8decc2c574</Item>
-            <Item Key="IdTokenAudience">1976f409-de0d-4c35-bd13-c0a51d489a83</Item>
+            <Item Key="client_id">a9923c2f-6ac1-4133-8641-5f2bd699f285</Item>
+            <Item Key="IdTokenAudience">252dc451-8218-46c3-bb5e-fb6f92aa3001</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="49b9f5df-8419-4deb-8956-ac8decc2c574" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="1976f409-de0d-4c35-bd13-c0a51d489a83" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="a9923c2f-6ac1-4133-8641-5f2bd699f285" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="252dc451-8218-46c3-bb5e-fb6f92aa3001" />
           </InputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
