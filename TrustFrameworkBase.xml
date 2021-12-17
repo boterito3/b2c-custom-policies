@@ -33,7 +33,7 @@
       </ClaimType>
 
       <ClaimType Id="userMessage">
-		    <DisplayName>Verifica tu Correo</DisplayName>
+		    <DisplayName>Digita el email completo:</DisplayName>
 		    <DataType>string</DataType>
 		    <UserInputType>Paragraph</UserInputType>
 	    </ClaimType>
@@ -93,10 +93,9 @@
       </ClaimType>
 
       <ClaimType Id="pepe">
-        <DisplayName>pepe</DisplayName>
+        <DisplayName>Tu cedula esta asociada al siguiente email:</DisplayName>
         <DataType>string</DataType>
-        <UserHelpText/>
-        <UserInputType>TextBox</UserInputType>
+        <UserInputType>Paragraph</UserInputType>
       </ClaimType>
 
       <ClaimType Id="accountEnabled">
@@ -330,14 +329,6 @@
     <ClaimsTransformations>
       <!--Demo: this claims transformation populates the userMessage with the text we 
       want to show to the end user-->
-      <ClaimsTransformation Id="GetUserMessage" TransformationMethod="CreateStringClaim">
-          <InputParameters>
-              <InputParameter Id="value" DataType="string" Value="Vamos a enviar un codigo al email encontrado abajo" />
-          </InputParameters>
-          <OutputClaims>
-              <OutputClaim ClaimTypeReferenceId="userMessage" TransformationClaimType="createdClaim" />
-          </OutputClaims>
-      </ClaimsTransformation>
 
       <ClaimsTransformation Id="GetFirstOtherMail" TransformationMethod="GetSingleItemFromStringCollection">
         <InputClaims>
@@ -347,6 +338,19 @@
           <OutputClaim ClaimTypeReferenceId="pepe" TransformationClaimType="extractedItem" />
         </OutputClaims>
       </ClaimsTransformation>
+
+      <ClaimsTransformation Id="SetPepeInEmail" TransformationMethod="ChangeCase">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="pepe" TransformationClaimType="inputClaim1" />
+        </InputClaims>
+      <InputParameters>
+        <InputParameter Id="toCase" DataType="string" Value="LOWER" />
+      </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
 
       <ClaimsTransformation Id="CreateOtherMailsFromEmail" TransformationMethod="AddItemToStringCollection">
         <InputClaims>
@@ -407,7 +411,7 @@
       </ContentDefinition>
 
       <ContentDefinition Id="api.signuporsignin">
-        <LoadUri>https://camilopublic.blob.core.windows.net/root/upload/signin.html</LoadUri>
+        <LoadUri>~/tenant/templates/AzureBlue/unified.cshtml</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:unifiedssp:2.1.5</DataUri>
         <Metadata>
@@ -443,7 +447,7 @@
       </ContentDefinition>
 
       <ContentDefinition Id="api.localaccountpasswordreset">
-        <LoadUri>https://camilopublic.blob.core.windows.net/root/upload/resetpassword.html</LoadUri>
+        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.7</DataUri>
         <Metadata>
@@ -604,10 +608,12 @@
             <OutputClaim ClaimTypeReferenceId="accountEnabled" />
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="pepe"/>
+            <OutputClaim ClaimTypeReferenceId="email"/>
           </OutputClaims>
           <OutputClaimsTransformations>
             <OutputClaimsTransformation ReferenceId="AssertAccountEnabledIsTrue" />
             <OutputClaimsTransformation ReferenceId="GetFirstOtherMail"/>
+            <!-- <OutputClaimsTransformation ReferenceId="SetPepeInEmail" /> -->
           </OutputClaimsTransformations>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -816,13 +822,14 @@
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
           </Metadata>
           <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" /> 
             <OutputClaim ClaimTypeReferenceId="cedula" />
-            <OutputClaim ClaimTypeReferenceId="pepe" />
+            <OutputClaim ClaimTypeReferenceId="pepe"/>
             <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="email"/>
           </OutputClaims>
           <ValidationTechnicalProfiles>
-            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingUserName" />
-                                    
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingUserName" />                                    
           </ValidationTechnicalProfiles>          
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
@@ -831,20 +838,18 @@
           <DisplayName>Test-Technical-Profile2</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountpasswordreset</Item>
           </Metadata>
-          <InputClaimsTransformations>
-            <InputClaimsTransformation ReferenceId="GetUserMessage" />
-          </InputClaimsTransformations>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="userMessage" />
             <InputClaim ClaimTypeReferenceId="cedula" />
             <InputClaim ClaimTypeReferenceId="pepe" />
-          </InputClaims>   
+            <InputClaim ClaimTypeReferenceId="email" />
+          </InputClaims>  
           <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="userMessage" />
             <OutputClaim ClaimTypeReferenceId="cedula" />
             <OutputClaim ClaimTypeReferenceId="pepe" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email" Required="true" />
           </OutputClaims>  
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
