@@ -32,6 +32,12 @@
         <AdminHelpText>Whether the user has selected Forgot your Password</AdminHelpText>
       </ClaimType>
 
+      <ClaimType Id="userMessage">
+		    <DisplayName>Verifica tu Correo</DisplayName>
+		    <DataType>string</DataType>
+		    <UserInputType>Paragraph</UserInputType>
+	    </ClaimType>
+
       <ClaimType Id="socialIdpUserId">
         <DisplayName>Username</DisplayName>
         <DataType>string</DataType>
@@ -76,6 +82,20 @@
         <DisplayName>Email Address</DisplayName>
         <DataType>string</DataType>
         <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
+      <ClaimType Id="signInNames.userName">
+        <DisplayName>User Name</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>User Name to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
+      <ClaimType Id="pepe">
+        <DisplayName>pepe</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText/>
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
@@ -195,6 +215,16 @@
         </Restriction>
       </ClaimType>
 
+      <ClaimType Id="cedula">
+        <DisplayName>Cedula</DisplayName>
+        <DataType>string</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OpenIdConnect" PartnerClaimType="email" />
+        </DefaultPartnerClaimTypes>
+        <UserHelpText>Cedula that can be used to contact you.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
       <ClaimType Id="otherMails">
         <DisplayName>Alternate Email Addresses</DisplayName>
         <DataType>stringCollection</DataType>
@@ -211,6 +241,7 @@
         </DefaultPartnerClaimTypes>
         <UserHelpText>Your user name as stored in the Azure Active Directory.</UserHelpText>
       </ClaimType>
+
 
       <ClaimType Id="upnUserName">
         <DisplayName>UPN User Name</DisplayName>
@@ -297,6 +328,26 @@
     </ClaimsSchema>
 
     <ClaimsTransformations>
+      <!--Demo: this claims transformation populates the userMessage with the text we 
+      want to show to the end user-->
+      <ClaimsTransformation Id="GetUserMessage" TransformationMethod="CreateStringClaim">
+          <InputParameters>
+              <InputParameter Id="value" DataType="string" Value="Vamos a enviar un codigo al email encontrado abajo" />
+          </InputParameters>
+          <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="userMessage" TransformationClaimType="createdClaim" />
+          </OutputClaims>
+      </ClaimsTransformation>
+
+      <ClaimsTransformation Id="GetFirstOtherMail" TransformationMethod="GetSingleItemFromStringCollection">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="otherMails" TransformationClaimType="collection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="pepe" TransformationClaimType="extractedItem" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
       <ClaimsTransformation Id="CreateOtherMailsFromEmail" TransformationMethod="AddItemToStringCollection">
         <InputClaims>
           <InputClaim ClaimTypeReferenceId="email" TransformationClaimType="item" />
@@ -533,6 +584,34 @@
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
 
+        <TechnicalProfile Id="AAD-UserReadUsingUserName">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="cedula" PartnerClaimType="signInNames.userName" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+           <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="accountEnabled" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="pepe"/>
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertAccountEnabledIsTrue" />
+            <OutputClaimsTransformation ReferenceId="GetFirstOtherMail"/>
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
         <TechnicalProfile Id="AAD-UserReadUsingEmailAddress2">
           <Metadata>
             <Item Key="Operation">Read</Item>
@@ -730,6 +809,46 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
 
+        <TechnicalProfile Id="Test-Technical-Profile">
+          <DisplayName>Test-Technical-Profile</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+          </Metadata>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="cedula" />
+            <OutputClaim ClaimTypeReferenceId="pepe" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingUserName" />
+                                    
+          </ValidationTechnicalProfiles>          
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="Test-Technical-Profile2">
+          <DisplayName>Test-Technical-Profile2</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+          </Metadata>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="GetUserMessage" />
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="userMessage" />
+            <InputClaim ClaimTypeReferenceId="cedula" />
+            <InputClaim ClaimTypeReferenceId="pepe" />
+          </InputClaims>   
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="userMessage" />
+            <OutputClaim ClaimTypeReferenceId="cedula" />
+            <OutputClaim ClaimTypeReferenceId="pepe" />
+          </OutputClaims>  
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
         <!-- This technical profile forces the user to verify the email address that they provide on the UI. Only after email is verified, the user account is
         read from the directory. -->
         <TechnicalProfile Id="LocalAccountDiscoveryUsingEmailAddress">
@@ -918,6 +1037,28 @@
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
+
+    <UserJourney Id="TestLogin">
+      <OrchestrationSteps>
+
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAssertedUsernameDiscoveryExchange" TechnicalProfileReferenceId="Test-Technical-Profile" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAssertedUsernameDiscoveryExchange2" TechnicalProfileReferenceId="Test-Technical-Profile2" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+
 
     <UserJourney Id="ProfileEdit">
       <OrchestrationSteps>
