@@ -38,6 +38,12 @@
 		    <UserInputType>Paragraph</UserInputType>
 	    </ClaimType>
 
+      <ClaimType Id="passwordRecoveryMessage">
+		    <DisplayName>Para recuperar contraseña, debes digitar tu Identificación</DisplayName>
+		    <DataType>string</DataType>
+		    <UserInputType>Paragraph</UserInputType>
+	    </ClaimType>
+
       <ClaimType Id="socialIdpUserId">
         <DisplayName>Username</DisplayName>
         <DataType>string</DataType>
@@ -93,6 +99,12 @@
       </ClaimType>
 
       <ClaimType Id="pepe">
+        <DataType>string</DataType>
+        <Mask Type="Regex" Regex="(?&lt;=.).(?=.*@)">*</Mask>
+        <UserInputType>Readonly</UserInputType>
+      </ClaimType>
+
+      <ClaimType Id="alternateEmail">
         <DataType>string</DataType>
         <Mask Type="Regex" Regex="(?&lt;=.).(?=.*@)">*</Mask>
         <UserInputType>Readonly</UserInputType>
@@ -223,6 +235,15 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
+      <ClaimType Id="identificacion">
+        <DisplayName>Identificación</DisplayName>
+        <DataType>string</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OpenIdConnect" PartnerClaimType="email" />
+        </DefaultPartnerClaimTypes>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
       <ClaimType Id="otherMails">
         <DisplayName>Alternate Email Addresses</DisplayName>
         <DataType>stringCollection</DataType>
@@ -335,6 +356,15 @@
         </InputClaims>
         <OutputClaims>
           <OutputClaim ClaimTypeReferenceId="pepe" TransformationClaimType="extractedItem" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <ClaimsTransformation Id="GetAlternateMail" TransformationMethod="GetSingleItemFromStringCollection">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="otherMails" TransformationClaimType="collection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="alternateEmail" TransformationClaimType="extractedItem" />
         </OutputClaims>
       </ClaimsTransformation>
 
@@ -613,6 +643,35 @@
             <OutputClaimsTransformation ReferenceId="AssertAccountEnabledIsTrue" />
             <OutputClaimsTransformation ReferenceId="GetFirstOtherMail"/>
             <!-- <OutputClaimsTransformation ReferenceId="SetPepeInEmail" /> -->
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserReadUsingUserName2">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="identificacion" PartnerClaimType="signInNames.userName" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+           <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="accountEnabled" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="alternateEmail"/>
+            <OutputClaim ClaimTypeReferenceId="email"/>
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertAccountEnabledIsTrue" />
+            <OutputClaimsTransformation ReferenceId="GetAlternateMail"/>
           </OutputClaimsTransformations>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -923,6 +982,45 @@
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
 
+        <TechnicalProfile Id="LocalAccountDiscoveryUsingUserName">
+          <DisplayName>Reset password using user name</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountpasswordreset</Item>
+          </Metadata>     
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="passwordRecoveryMessage" />
+            <OutputClaim ClaimTypeReferenceId="objectId" /> 
+            <OutputClaim ClaimTypeReferenceId="identificacion" />
+            <OutputClaim ClaimTypeReferenceId="alternateEmail"/>
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="email"/>
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingUserName2" />                                    
+          </ValidationTechnicalProfiles>          
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="UpdatePasswordWithIdentificacionAndAlternateEmail">
+          <DisplayName>Actualizar contraseña con identificacion y email alternativo</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountpasswordreset</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="identificacion" />
+            <InputClaim ClaimTypeReferenceId="alternateEmail" />
+            <InputClaim ClaimTypeReferenceId="email" />
+          </InputClaims>  
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="identificacion" />
+            <OutputClaim ClaimTypeReferenceId="alternateEmail" PartnerClaimType="Verified.Email" Required="true" />
+          </OutputClaims>  
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
       </TechnicalProfiles>
     </ClaimsProvider>
 
@@ -1025,7 +1123,7 @@
             </Precondition>
           </Preconditions>
           <JourneyList>
-            <Candidate SubJourneyReferenceId="PasswordReset" />
+            <Candidate SubJourneyReferenceId="PasswordResetWitIdentificationAndAlternateEmail" />
           </JourneyList>
         </OrchestrationStep>
 
@@ -1143,6 +1241,28 @@
 
         <!-- Collect and persist a new password. -->
         <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+      </OrchestrationSteps>
+    </SubJourney>
+
+    <SubJourney Id="PasswordResetWitIdentificationAndAlternateEmail" Type="Call">
+      <OrchestrationSteps>
+       <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SearchUserByIdentificacionExchange" TechnicalProfileReferenceId="LocalAccountDiscoveryUsingUserName" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="VerifyAlternateEmailExchange" TechnicalProfileReferenceId="UpdatePasswordWithIdentificacionAndAlternateEmail" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
           </ClaimsExchanges>
