@@ -33,7 +33,7 @@
       </ClaimType>
 
       <ClaimType Id="userMessage">
-		    <DisplayName>Digita el email completo:</DisplayName>
+		    <DisplayName>Para recuperar contraseña, debes digitar tu Identificación</DisplayName>
 		    <DataType>string</DataType>
 		    <UserInputType>Paragraph</UserInputType>
 	    </ClaimType>
@@ -93,7 +93,6 @@
       </ClaimType>
 
       <ClaimType Id="pepe">
-        <DisplayName>Tu Identification esta asociada al siguiente email:</DisplayName>
         <DataType>string</DataType>
         <Mask Type="Regex" Regex="(?&lt;=.).(?=.*@)">*</Mask>
         <UserInputType>Readonly</UserInputType>
@@ -216,12 +215,11 @@
       </ClaimType>
 
       <ClaimType Id="cedula">
-        <DisplayName>Cedula</DisplayName>
+        <DisplayName>Identificación</DisplayName>
         <DataType>string</DataType>
         <DefaultPartnerClaimTypes>
           <Protocol Name="OpenIdConnect" PartnerClaimType="email" />
         </DefaultPartnerClaimTypes>
-        <UserHelpText>Cedula that can be used to contact you.</UserHelpText>
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
@@ -820,9 +818,10 @@
           <DisplayName>Test-Technical-Profile</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
-          </Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountpasswordreset</Item>
+          </Metadata>     
           <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="userMessage" />
             <OutputClaim ClaimTypeReferenceId="objectId" /> 
             <OutputClaim ClaimTypeReferenceId="cedula" />
             <OutputClaim ClaimTypeReferenceId="pepe"/>
@@ -849,8 +848,7 @@
           </InputClaims>  
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="cedula" />
-            <OutputClaim ClaimTypeReferenceId="pepe" />
-            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="pepe" PartnerClaimType="Verified.Email" Required="true" />
           </OutputClaims>  
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>

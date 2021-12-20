@@ -72,7 +72,7 @@
       </SupportedLanguages>
 
       <LocalizedResources Id="api.signuporsignin.en">
-        <LocalizedStrings>
+        <LocalizedStrings>          
           <LocalizedString ElementType="ClaimType" ElementId="signInName" StringId="DisplayName">Cedula</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="heading">Sign in</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="local_intro_generic">Entra con tu cedula</LocalizedString>
@@ -140,7 +140,7 @@
           <LocalizedString ElementType="UxElement" StringId="ver_fail_throttled">There have been too many requests to verify this email address. Please wait a while, then try again.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_info_msg">Verification code has been sent to your inbox. Please copy it to the input box below.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_input">Verification code</LocalizedString>
-          <LocalizedString ElementType="UxElement" StringId="ver_intro_msg">Debemos verificar tu email, digitalo a continuación:</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="ver_intro_msg">Debemos verificar el siguiente email que esta sociado a tu cuenta.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_success_msg">E-mail address verified. You can now continue.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="ServiceThrottled">There are too many requests at this moment. Please wait for some time and try again.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimNotVerified">Claim not verified: {0}</LocalizedString>
@@ -155,6 +155,7 @@
       <!-- Self-asserted page English-->
       <LocalizedResources Id="api.selfasserted.en">
         <LocalizedStrings>
+          <LocalizedString ElementType="ClaimType" ElementId="cedula" StringId="UserHelpText">Digita tu identificacion para recuperar tu contraseña:</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalAlreadyExists">You are already registered, please press the back button and sign in instead.</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
@@ -189,7 +190,7 @@
           <LocalizedString ElementType="UxElement" StringId="ver_fail_throttled">There have been too many requests to verify this email address. Please wait a while, then try again.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_info_msg">Verification code has been sent to your inbox. Please copy it to the input box below.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_input">Verification code</LocalizedString>
-          <LocalizedString ElementType="UxElement" StringId="ver_intro_msg">Debemos verificar tu email, digitalo a continuación:</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="ver_intro_msg">Debemos verificar el siguiente email que esta sociado a tu cuenta.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="ver_success_msg">E-mail address verified. You can now continue.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="ServiceThrottled">There are too many requests at this moment. Please wait for some time and try again.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimNotVerified">Claim not verified: {0}</LocalizedString>
