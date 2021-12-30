@@ -33,13 +33,13 @@
       </ClaimType>
 
       <ClaimType Id="userMessage">
-		    <DisplayName>Para recuperar contraseña, debes digitar tu Identificación</DisplayName>
+		    <DisplayName>Para continuar debes digitar tu Identificación</DisplayName>
 		    <DataType>string</DataType>
 		    <UserInputType>Paragraph</UserInputType>
 	    </ClaimType>
 
       <ClaimType Id="passwordRecoveryMessage">
-		    <DisplayName>Para recuperar contraseña, debes digitar tu Identificación</DisplayName>
+		    <DisplayName>Para continuar debes digitar tu Identificación</DisplayName>
 		    <DataType>string</DataType>
 		    <UserInputType>Paragraph</UserInputType>
 	    </ClaimType>

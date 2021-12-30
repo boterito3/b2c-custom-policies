@@ -83,7 +83,7 @@
           <LocalizedString ElementType="UxElement" StringId="createaccount_one_link">Sign up now</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="createaccount_two_links">Sign up with {0} or {1}</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="createaccount_three_links">Sign up with {0}, {1}, or {2}</LocalizedString>
-          <LocalizedString ElementType="UxElement" StringId="forgotpassword_link">Forgot your password?</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="forgotpassword_link">Definir Contraseña</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="button_signin">Login</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="createaccount_intro">Don't have an account?</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="unknown_error">We are having trouble signing you in. Please try again later.</LocalizedString>
@@ -92,7 +92,7 @@
           <LocalizedString ElementType="ClaimsProvider" StringId="FacebookExchange">Facebook</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="ResourceOwnerFlowInvalidCredentials">Tu contraseña es incorrecta.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfInvalidPassword">Tu contraseña es incorrecta.</LocalizedString>
-          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfPasswordExpired">Tu contraseña expiró.</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfPasswordExpired">Es tu primer login, porfavor da click en "Definir Contraseña"</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">We can't seem to find your account.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfOldPasswordUsed">Looks like you used an old password.</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="DefaultMessage">Usuario o Contraseña Invalidos</LocalizedString>
